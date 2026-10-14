@@ -22,10 +22,11 @@ jobs:
   lint:
     if: github.event_name != 'schedule'
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     permissions:
       contents: read
       checks: write
+      security-events: write
 
     steps:
       - name: ⚙️ Setup
@@ -48,22 +49,6 @@ jobs:
           pattern: |
             *.sh
           check_all_files_with_shebangs: 'true'
-
-  lint-actions:
-    if: github.event_name != 'schedule'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 7
-    permissions:
-      contents: read
-      security-events: write
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-          show-progress: false
-          sparse-checkout: .github/
 
       - name: Check workflow files
         uses: docker://ghcr.io/jdx/jactionlint:1.8.2@sha256:5515b269082f92ee0962ccc236df3300113aedcd4008a2aad5ad0903680b7c67
@@ -115,10 +100,9 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   success:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     needs:
       - lint
-      - lint-actions
       - build
     timeout-minutes: 1
     if: always()
@@ -132,9 +116,4 @@ jobs:
         if: |
           needs.lint.result == 'failure' ||
           needs.lint.result == 'cancelled'
-        run: exit 1
-      - name: Fail for failed or cancelled lint-actions
-        if: |
-          needs.lint-actions.result == 'failure' ||
-          needs.lint-actions.result == 'cancelled'
         run: exit 1
