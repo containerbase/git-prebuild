@@ -21,18 +21,24 @@ permissions:
 jobs:
   lint:
     if: github.event_name != 'schedule'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    runs-on: ubuntu-slim
+    timeout-minutes: 10
     permissions:
       contents: read
       checks: write
-      security-events: write
 
     steps:
       - name: ⚙️ Setup
         uses: containerbase/internal-tools/setup@99277e09a125ec270a00ca46569ed2903478f3ef # v5.1.0
         with:
           save-cache: true
+
+      # shellcheck is used by jactionlint for the `run` scripts
+      - name: Setup mise
+        uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+        with:
+          install_args: github:jdx/jactionlint shellcheck zizmor
+
       - run: pnpm oxfmt
 
       - name: shellcheck
@@ -51,14 +57,12 @@ jobs:
           check_all_files_with_shebangs: 'true'
 
       - name: Check workflow files
-        uses: docker://ghcr.io/jdx/jactionlint:1.8.2@sha256:5515b269082f92ee0962ccc236df3300113aedcd4008a2aad5ad0903680b7c67
-        with:
-          args: --color
+        run: mise exec -- jactionlint -color
 
       - name: Run zizmor
-        uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
-        with:
-          version: 1.30.1
+        run: mise exec -- zizmor --format github .github/
+        env:
+          GH_TOKEN: ${{ github.token }}
 
   build:
     needs:

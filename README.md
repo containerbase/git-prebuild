@@ -44,6 +44,7 @@ A failing distro fails the version, so nothing is uploaded.
 ## Local development
 
 `mise install` installs `jactionlint`, `shellcheck` and `zizmor`: `jactionlint` and `zizmor .github/` lint the workflows, `shellcheck` the shell scripts.
+CI installs the same versions from [`mise.toml`](mise.toml) and runs `jactionlint` and `zizmor` the same way; the shell scripts are checked with `reviewdog/action-shellcheck`, which annotates pull requests.
 
 Build the image
 
