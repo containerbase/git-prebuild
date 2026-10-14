@@ -43,6 +43,8 @@ A failing distro fails the version, so nothing is uploaded.
 
 ## Local development
 
+`mise install` installs `jactionlint`, then `jactionlint` lints the workflows.
+
 Build the image
 
 ```bash
