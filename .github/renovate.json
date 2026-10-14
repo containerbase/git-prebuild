@@ -12,6 +12,14 @@
       "description": "Disabled while only git 2.33.0 is built.",
       "matchFileNames": ["renovate.Dockerfile"],
       "enabled": false
+    },
+    {
+      "description": "Keep each test image on its ubuntu release.",
+      "matchFileNames": ["test/Dockerfile"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ghcr.io/containerbase/ubuntu"],
+      "matchUpdateTypes": ["major", "minor"],
+      "enabled": false
     }
   ]
 }

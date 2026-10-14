@@ -8,5 +8,6 @@
   "startVersion": "2.33.0",
   "allowedVersions": "2.33.0",
   "ignoredVersions": [],
-  "reverse": true
+  "reverse": true,
+  "test": "bin/test.sh"
 }

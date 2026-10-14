@@ -66,83 +66,11 @@ jobs:
           dry-run: ${{github.ref != 'refs/heads/main'}}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # on main the archives are uploaded to the release instead
-      - name: upload archives
-        if: github.ref != 'refs/heads/main'
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: git-${{ matrix.distro }}-${{ matrix.arch.name }}
-          path: .cache/*.tar.xz
-          if-no-files-found: error
-
-  test:
-    needs:
-      - build
-    if: github.ref != 'refs/heads/main'
-    runs-on: ${{ matrix.arch.os }}
-    name: test (${{ matrix.distro }}, ${{ matrix.arch.name }})
-    timeout-minutes: 10
-
-    permissions:
-      contents: read
-
-    strategy:
-      matrix:
-        distro:
-          - jammy
-          - noble
-          - resolute
-        arch:
-          - name: x86_64
-            os: ubuntu-24.04
-          - name: aarch64
-            os: ubuntu-24.04-arm
-
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-          show-progress: false
-
-      # the jammy build is used on all distros
-      - name: download archives
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          name: git-jammy-${{ matrix.arch.name }}
-          path: .cache
-
-      - name: find archives
-        id: archives
-        run: echo "files=$(echo .cache/*.tar.xz)" >> "$GITHUB_OUTPUT"
-
-      # one step per distro, so Renovate can update the pinned images
-      - name: test (jammy)
-        if: matrix.distro == 'jammy'
-        uses: docker://ghcr.io/containerbase/ubuntu:22.04@sha256:5ec03bb3441e8b0bf3b4f9cd4629a1ae763010dc3035bb8da3ae6cf026486401
-        with:
-          entrypoint: bash
-          args: bin/test.sh ${{ steps.archives.outputs.files }}
-
-      - name: test (noble)
-        if: matrix.distro == 'noble'
-        uses: docker://ghcr.io/containerbase/ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55
-        with:
-          entrypoint: bash
-          args: bin/test.sh ${{ steps.archives.outputs.files }}
-
-      - name: test (resolute)
-        if: matrix.distro == 'resolute'
-        uses: docker://ghcr.io/containerbase/ubuntu:26.04@sha256:f144425ff09be612d6d9ad965196e9cdc23dae1f42110a8a11a3e9a8198759f7
-        with:
-          entrypoint: bash
-          args: bin/test.sh ${{ steps.archives.outputs.files }}
-
   success:
     runs-on: ubuntu-24.04
     needs:
       - lint
       - build
-      - test
     timeout-minutes: 1
     if: always()
     steps:
@@ -150,12 +78,6 @@ jobs:
         if: |
           needs.build.result == 'failure' ||
           needs.build.result == 'cancelled'
-        run: exit 1
-      # test is skipped on main
-      - name: Fail for failed or cancelled test
-        if: |
-          needs.test.result == 'failure' ||
-          needs.test.result == 'cancelled'
         run: exit 1
       - name: Fail for failed or cancelled lint
         if: |
