@@ -41,6 +41,19 @@ awk -v file="${FILE}" '$2 == file' sha256sums.asc | sha256sum -c --strict -
 tar -xf "${FILE}"
 pushd "${NAME}-${VERSION}" > /dev/null
 
+# fail on make options that make-options.txt doesn't know yet, see docs/build-options.md
+OPTIONS="/cache/make-options-${VERSION}.txt"
+grep -o '^# Define [A-Z][A-Z0-9_]*' Makefile | cut -c10- | LC_ALL=C sort -u > "${OPTIONS}"
+new_options=$(LC_ALL=C comm -13 /usr/local/share/git-prebuild/make-options.txt "${OPTIONS}")
+old_options=$(LC_ALL=C comm -23 /usr/local/share/git-prebuild/make-options.txt "${OPTIONS}")
+if [[ -n "${old_options}" ]]; then
+  printf 'Make options not documented by %s %s:\n%s\n' "${NAME}" "${VERSION}" "${old_options}"
+fi
+if [[ -n "${new_options}" ]]; then
+  printf 'New make options in %s %s, check them and add them to make-options.txt:\n%s\n' "${NAME}" "${VERSION}" "${new_options}" >&2
+  exit 1
+fi
+
 echo "Building ${NAME} ${VERSION} for ${CODENAME}-${ARCH}"
 make -j "$(nproc)" "${BUILD_ARGS[@]}" "${MAKE_ARGS[@]}" all
 make "${BUILD_ARGS[@]}" "${MAKE_ARGS[@]}" install

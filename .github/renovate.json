@@ -1,17 +1,26 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["local>containerbase/.github"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Track the newest approved git minor, which bounds the versions binary-builder builds.",
+      "managerFilePatterns": ["/^builder\\.json$/"],
+      "matchStrings": ["\"allowedVersions\": \"<=(?<currentValue>\\d+\\.\\d+)\""],
+      "depNameTemplate": "git",
+      "packageNameTemplate": "git/git",
+      "datasourceTemplate": "github-tags",
+      "extractVersionTemplate": "^v(?<version>\\d+\\.\\d+)\\.\\d+$",
+      "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)$"
+    }
+  ],
   "packageRules": [
     {
-      "description": "Handle tag prefix in git repo.",
-      "matchDatasources": ["github-tags"],
-      "matchPackageNames": ["git/git"],
-      "extractVersion": "^v(?<version>\\d+\\.\\d+\\.\\d+)$"
-    },
-    {
-      "description": "Disabled while only one git version is built.",
-      "matchFileNames": ["renovate.Dockerfile"],
-      "enabled": false
+      "description": "Ask for a review of new git minors, the PR build fails on new make options. Patches of approved minors are built without Renovate.",
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["git"],
+      "reviewers": ["viceice"],
+      "separateMultipleMinor": true
     }
   ]
 }
