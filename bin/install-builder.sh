@@ -26,6 +26,32 @@ apt-get install -q -y \
   zlib1g-dev \
   ;
 
+#--------------------------------
+# rust toolchain, only used for the build
+#--------------------------------
+# renovate: datasource=github-releases depName=rust packageName=rust-lang/rust
+RUST_VERSION=1.90.0
+
+RUST_TARGET="$(uname -m)-unknown-linux-gnu"
+RUST_FILE="rust-${RUST_VERSION}-${RUST_TARGET}.tar.xz"
+RUST_DIR=$(mktemp -d)
+
+curl -fsSL -o "${RUST_DIR}/${RUST_FILE}" "https://static.rust-lang.org/dist/${RUST_FILE}"
+curl -fsSL -o "${RUST_DIR}/${RUST_FILE}.sha256" "https://static.rust-lang.org/dist/${RUST_FILE}.sha256"
+
+pushd "${RUST_DIR}" > /dev/null
+sha256sum -c --strict "${RUST_FILE}.sha256"
+tar -xf "${RUST_FILE}"
+"./rust-${RUST_VERSION}-${RUST_TARGET}/install.sh" \
+  --prefix=/usr/local \
+  --components="rustc,cargo,rust-std-${RUST_TARGET}" \
+  --disable-ldconfig
+popd > /dev/null
+rm -rf "${RUST_DIR}"
+
+cargo --version
+rustc --version
+
 mkdir -p /usr/local/git /cache
 
 #--------------------------------

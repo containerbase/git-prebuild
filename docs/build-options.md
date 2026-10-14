@@ -14,8 +14,10 @@
 | `USE_LIBPCRE2=YesPlease`          | perl compatible regular expressions for `git grep -P` and `log -P`                                                                                                                            |
 | `NO_PERL=YesPlease`               | no perl scripts (`send-email`, `svn`, `cvs*`, `archimport`), none of them is used by Renovate or the tools containerbase installs; needs git ≥ 2.37, where `add -i`/`add -p` are C by default |
 | `NO_PYTHON=YesPlease`             | no python scripts                                                                                                                                                                             |
-| `NO_RUST=YesPlease`               | Rust is optional until git 3.0, so the build needs no Cargo toolchain; the C implementations are used                                                                                         |
 
 The binaries are stripped after `make install`.
+
+`NO_RUST` is not set, so git builds its Rust code (`libgitcore`, which replaces some C implementations) with the Rust toolchain that [`bin/install-builder.sh`](../bin/install-builder.sh) installs in the builder image from the official standalone installer.
+The toolchain is only used for the build, the archive has no new runtime dependencies.
 
 `SKIP_DASHED_BUILT_INS` is not set: local transports (`file://` URLs, `git fetch /path`, local submodules) start the dashed `git-upload-pack` from `libexec/git-core`, which that option removes.

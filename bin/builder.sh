@@ -30,7 +30,6 @@ MAKE_ARGS=(
   "USE_LIBPCRE2=YesPlease"
   "NO_PERL=YesPlease"
   "NO_PYTHON=YesPlease"
-  "NO_RUST=YesPlease"
 )
 
 echo "Downloading ${NAME} ${VERSION}"
