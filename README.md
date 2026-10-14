@@ -21,7 +21,7 @@ Before each upload, `binary-builder` runs [`bin/test.sh`](bin/test.sh), which te
 
 ## Development
 
-Install the linters with `mise install`, then run `jactionlint`, `zizmor .github/` and `shellcheck`.
+Install the linters with `mise install`, then run `jactionlint`, `zizmor .github/` and `shellcheck`; the pre-commit hook runs them on the staged files too.
 
 ```bash
 # build and pack a version into .cache/
