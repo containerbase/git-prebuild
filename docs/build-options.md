@@ -25,6 +25,6 @@ The toolchain is only used for the build, the archive has no new runtime depende
 ## New git versions
 
 `binary-builder` builds every git release from `startVersion` up to the newest approved minor (`"allowedVersions": "<=2.56"` in [`builder.json`](../builder.json)), so new patches of approved minors are built on `main` without a PR.
-For a new minor, Renovate opens one PR per minor that bumps that bound; when the PR can't automerge (e.g. the build fails on new make options), Renovate assigns the maintainer.
+For a new minor, Renovate opens one PR per minor that bumps that bound, two hours after its release so the kernel.org tarball is published; when the PR can't automerge (e.g. the build fails on new make options), Renovate assigns the maintainer.
 The PR build only builds the newest version in the bound, and [`bin/builder.sh`](../bin/builder.sh) compares the `# Define` options of its `Makefile` with [`make-options.txt`](../make-options.txt) before `make`: new options fail the build, options missing in an older version only print a warning.
 To approve a new minor, check the new options, enable the useful ones in `bin/builder.sh`, and add them to `make-options.txt`; the build writes the full list of the version to `.cache/make-options-<version>.txt`.
