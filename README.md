@@ -43,7 +43,7 @@ A failing distro fails the version, so nothing is uploaded.
 
 ## Local development
 
-`mise install` installs `jactionlint`, then `jactionlint` lints the workflows.
+`mise install` installs `jactionlint`, `shellcheck` and `zizmor`: `jactionlint` and `zizmor .github/` lint the workflows, `shellcheck` the shell scripts.
 
 Build the image
 
