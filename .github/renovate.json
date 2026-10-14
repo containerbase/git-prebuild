@@ -1,0 +1,17 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["local>containerbase/.github"],
+  "packageRules": [
+    {
+      "description": "Handle tag prefix in git repo.",
+      "matchDatasources": ["github-tags"],
+      "matchPackageNames": ["git/git"],
+      "extractVersion": "^v(?<version>\\d+\\.\\d+\\.\\d+)$"
+    },
+    {
+      "description": "Disabled while only git 2.33.0 is built.",
+      "matchFileNames": ["renovate.Dockerfile"],
+      "enabled": false
+    }
+  ]
+}

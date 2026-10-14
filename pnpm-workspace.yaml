@@ -1,0 +1,4 @@
+# https://pnpm.io/settings
+saveExact: true
+savePrefix: ''
+shellEmulator: true
