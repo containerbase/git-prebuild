@@ -1,0 +1,25 @@
+{
+  "name": "containerbase-git-prebuild",
+  "private": true,
+  "license": "MIT",
+  "author": "Michael Kriese <michael.kriese@visualon.de>",
+  "repository": "https://github.com/containerbase/git-prebuild.git",
+  "scripts": {
+    "lint": "run-s oxfmt",
+    "lint-fix": "run-s oxfmt-fix",
+    "oxfmt": "oxfmt --check",
+    "oxfmt-fix": "oxfmt",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "9.1.7",
+    "lint-staged": "16.4.0",
+    "npm-run-all2": "8.0.4",
+    "oxfmt": "0.72.0"
+  },
+  "engines": {
+    "node": ">=24.11.0",
+    "pnpm": "^11.0.0"
+  },
+  "packageManager": "pnpm@11.27.0"
+}

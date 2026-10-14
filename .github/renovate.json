@@ -1,0 +1,25 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["local>containerbase/.github"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Track the newest approved git minor, which bounds the versions binary-builder builds.",
+      "managerFilePatterns": ["/^builder\\.json$/"],
+      "matchStrings": ["\"allowedVersions\": \"<=(?<currentValue>\\d+\\.\\d+)\""],
+      "depNameTemplate": "git",
+      "packageNameTemplate": "git/git",
+      "datasourceTemplate": "github-tags",
+      "extractVersionTemplate": "^v(?<version>\\d+\\.\\d+)\\.\\d+$",
+      "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)$"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "separate multiple minor updates",
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["git"],
+      "separateMultipleMinor": true
+    }
+  ]
+}
