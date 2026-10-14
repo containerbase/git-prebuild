@@ -8,8 +8,7 @@ set -e
 ARCHIVE=${1}
 VERSION=${2}
 
-# shellcheck disable=SC1091
-CODENAME=$(. /etc/os-release && echo "${VERSION_CODENAME}")
+CODENAME=$(awk -F= '$1 == "VERSION_CODENAME" { gsub(/"/, "", $2); print $2 }' /etc/os-release)
 
 NAME=git
 ARCH=$(uname -m)
