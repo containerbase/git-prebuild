@@ -20,6 +20,12 @@
       "matchManagers": ["custom.regex"],
       "matchDepNames": ["git"],
       "separateMultipleMinor": true
+    },
+    {
+      "description": "wait for the kernel.org tarball, which can be published after the git tag",
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["git"],
+      "minimumReleaseAge": "2 hours"
     }
   ]
 }
