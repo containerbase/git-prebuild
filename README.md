@@ -38,7 +38,7 @@ Releases are tagged with the plain git version (eg. `2.33.0`) and contain a `git
 
 `builder.json` registers [`bin/test.sh`](bin/test.sh) as the `binary-builder` test hook.
 After each build, and before the checksum and the upload, `binary-builder` runs `bin/test.sh <archive> <version>` on the runner, also for pull requests.
-It builds [`test/Dockerfile`](test/Dockerfile) for `jammy`, `noble` and `resolute` with the runner's architecture, which runs [`test/test.sh`](test/test.sh) in a plain container of each distro: it installs the runtime packages, extracts the archive and checks the linked libraries, `git --version`, `git --exec-path`, `git status` and `git ls-remote` over https.
+For `jammy`, `noble` and `resolute` it runs [`test/test.sh`](test/test.sh) with `docker run` in the latest `ghcr.io/containerbase/ubuntu` image of that release (pulled on every run) with the runner's architecture: it installs the runtime packages, extracts the archive and checks the linked libraries, `git --version`, `git --exec-path`, `git status` and `git ls-remote` over https.
 A failing distro fails the version, so nothing is uploaded.
 
 ## Local development
@@ -63,7 +63,7 @@ Test a packed release on all distros
 bin/test.sh .cache/git-2.33.0-jammy-x86_64.tar.xz 2.33.0
 ```
 
-Pass extra `docker build` arguments with `DOCKER_BUILD_ARGS`, eg. `DOCKER_BUILD_ARGS=--network=host` when the docker DNS doesn't work.
+Pass extra `docker run` arguments with `DOCKER_RUN_ARGS`, eg. `DOCKER_RUN_ARGS=--network=host` when the docker DNS doesn't work.
 
 Optional environment variables
 

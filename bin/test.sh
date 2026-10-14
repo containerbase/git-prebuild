@@ -2,8 +2,8 @@
 
 # Tests a git archive on all supported distros with the host architecture.
 # binary-builder calls it after each build: test.sh <archive> <version>
-# Extra `docker build` arguments can be passed with DOCKER_BUILD_ARGS,
-# e.g. `DOCKER_BUILD_ARGS=--network=host` when the docker DNS doesn't work locally.
+# Extra `docker run` arguments can be passed with DOCKER_RUN_ARGS,
+# e.g. `DOCKER_RUN_ARGS=--network=host` when the docker DNS doesn't work locally.
 
 set -e
 
@@ -15,22 +15,22 @@ fi
 ARCHIVE=$(realpath "${1}")
 VERSION=${2}
 DISTROS=(jammy noble resolute)
+declare -A RELEASES=([jammy]=22.04 [noble]=24.04 [resolute]=26.04)
 TEST_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/test"
 
-read -r -a docker_args <<< "${DOCKER_BUILD_ARGS}"
+read -r -a docker_args <<< "${DOCKER_RUN_ARGS}"
 
 failed=()
 for distro in "${DISTROS[@]}"; do
   echo "Testing $(basename "${ARCHIVE}") on ${distro}"
-  if ! docker build \
-    --progress plain \
-    --no-cache \
+  if ! docker run \
+    --rm \
+    --pull always \
     "${docker_args[@]}" \
-    --build-arg "DISTRO=${distro}" \
-    --build-arg "ARCHIVE=$(basename "${ARCHIVE}")" \
-    --build-arg "VERSION=${VERSION}" \
-    --build-context "archive=$(dirname "${ARCHIVE}")" \
-    "${TEST_DIR}"; then
+    --volume "$(dirname "${ARCHIVE}"):/archive:ro" \
+    --volume "${TEST_DIR}:/test:ro" \
+    "ghcr.io/containerbase/ubuntu:${RELEASES[${distro}]}" \
+    /test/test.sh "/archive/$(basename "${ARCHIVE}")" "${VERSION}"; then
     failed+=("${distro}")
   fi
 done
