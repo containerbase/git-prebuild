@@ -16,10 +16,9 @@
   ],
   "packageRules": [
     {
-      "description": "Ask for a review of new git minors, the PR build fails on new make options. Patches of approved minors are built without Renovate.",
+      "description": "separate multiple minor updates",
       "matchManagers": ["custom.regex"],
       "matchDepNames": ["git"],
-      "reviewers": ["viceice"],
       "separateMultipleMinor": true
     }
   ]
