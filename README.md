@@ -41,9 +41,6 @@ After each build, and before the checksum and the upload, `binary-builder` runs 
 It builds [`test/Dockerfile`](test/Dockerfile) for `jammy`, `noble` and `resolute` with the runner's architecture, which runs [`test/test.sh`](test/test.sh) in a plain container of each distro: it installs the runtime packages, extracts the archive and checks the linked libraries, `git --version`, `git --exec-path`, `git status` and `git ls-remote` over https.
 A failing distro fails the version, so nothing is uploaded.
 
-The hook needs a `containerbase/internal-tools` release that includes [containerbase/internal-tools#2499](https://github.com/containerbase/internal-tools/pull/2499).
-Until the action pin in the workflow is bumped to such a release, the tests don't run in CI.
-
 ## Local development
 
 Build the image
