@@ -23,12 +23,31 @@ jobs:
     if: github.event_name != 'schedule'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    permissions:
+      contents: read
+      checks: write
+
     steps:
       - name: ⚙️ Setup
         uses: containerbase/internal-tools/setup@99277e09a125ec270a00ca46569ed2903478f3ef # v5.1.0
         with:
           save-cache: true
       - run: pnpm oxfmt
+
+      - name: shellcheck
+        if: ${{ github.event_name != 'merge_group' }}
+        uses: reviewdog/action-shellcheck@d0b8d5fd7fad6afdb6e1b6ce1778892be4d1f427 # v1.34.1
+        with:
+          fail_level: any
+          reporter: github-pr-annotations
+          filter_mode: nofilter
+          path: |
+            bin
+            test
+            .husky
+          pattern: |
+            *.sh
+          check_all_files_with_shebangs: 'true'
 
   lint-actions:
     if: github.event_name != 'schedule'
