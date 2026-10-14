@@ -20,6 +20,7 @@ permissions:
 
 jobs:
   lint:
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -30,6 +31,7 @@ jobs:
       - run: pnpm oxfmt
 
   lint-actions:
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-24.04
     timeout-minutes: 7
     permissions:
@@ -57,6 +59,8 @@ jobs:
   build:
     needs:
       - lint
+    # lint is skipped on scheduled runs, but must pass when it ran
+    if: ${{ !cancelled() && !failure() }}
     runs-on: ${{ matrix.arch.os }}
     name: build (${{ matrix.distro }}, ${{ matrix.arch.name }})
     timeout-minutes: 30
