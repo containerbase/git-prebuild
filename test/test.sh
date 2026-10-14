@@ -71,3 +71,22 @@ repo=$(mktemp -d)
 "${GIT}" -C "${repo}" -c safe.directory='*' status
 
 "${GIT}" ls-remote https://github.com/git/git HEAD
+
+# a shallow https clone, and a submodule over file://
+work=$(mktemp -d)
+
+"${GIT}" clone -q --depth 1 https://github.com/containerbase/git-prebuild "${work}/https"
+"${GIT}" -C "${work}/https" log --oneline -1
+
+"${GIT}" init -q "${work}/sub"
+"${GIT}" -C "${work}/sub" -c user.name=test -c user.email=test@example.com commit -q --allow-empty -m sub
+"${GIT}" init -q "${work}/super"
+"${GIT}" -C "${work}/super" -c protocol.file.allow=always submodule add -q "file://${work}/sub" sub
+"${GIT}" -C "${work}/super" -c user.name=test -c user.email=test@example.com commit -q -m super
+"${GIT}" clone -q "file://${work}/super" "${work}/clone"
+"${GIT}" -C "${work}/clone" -c protocol.file.allow=always submodule update --init
+"${GIT}" -C "${work}/clone" submodule status
+if [[ ! -e "${work}/clone/sub/.git" ]]; then
+  echo "Submodule not checked out" >&2
+  exit 1
+fi

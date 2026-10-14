@@ -28,7 +28,9 @@ MAKE_ARGS=(
   "NO_INSTALL_HARDLINKS=YesPlease"
   "INSTALL_SYMLINKS=YesPlease"
   "USE_LIBPCRE2=YesPlease"
+  "NO_PERL=YesPlease"
   "NO_PYTHON=YesPlease"
+  "NO_RUST=YesPlease"
 )
 
 echo "Downloading ${NAME} ${VERSION}"
@@ -74,6 +76,30 @@ function check_git () {
   fi
 }
 
+# check a shallow https clone, and a submodule over file://
+function check_clone () {
+  local work
+  work=$(mktemp -d)
+
+  "${GIT}" clone -q --depth 1 https://github.com/containerbase/git-prebuild "${work}/https"
+  "${GIT}" -C "${work}/https" log --oneline -1
+
+  "${GIT}" init -q "${work}/sub"
+  "${GIT}" -C "${work}/sub" -c user.name=test -c user.email=test@example.com commit -q --allow-empty -m sub
+  "${GIT}" init -q "${work}/super"
+  "${GIT}" -C "${work}/super" -c protocol.file.allow=always submodule add -q "file://${work}/sub" sub
+  "${GIT}" -C "${work}/super" -c user.name=test -c user.email=test@example.com commit -q -m super
+  "${GIT}" clone -q "file://${work}/super" "${work}/clone"
+  "${GIT}" -C "${work}/clone" -c protocol.file.allow=always submodule update --init
+  "${GIT}" -C "${work}/clone" submodule status
+  if [[ ! -e "${work}/clone/sub/.git" ]]; then
+    echo "Submodule not checked out" >&2
+    exit 1
+  fi
+
+  rm -rf "${work}"
+}
+
 echo "Testing ${NAME} ${VERSION} for ${CODENAME}-${ARCH}"
 GIT="${PREFIX}/bin/git"
 
@@ -92,6 +118,9 @@ repo=$(mktemp -d)
 "${GIT}" -C "${repo}" -c safe.directory='*' status
 
 "${GIT}" ls-remote https://github.com/git/git HEAD
+check_clone
+
+echo "Libexec entries: $(find "${PREFIX}/libexec/git-core" -mindepth 1 -maxdepth 1 | wc -l)"
 
 echo "Testing relocated ${NAME} ${VERSION}"
 relocated="$(mktemp -d)/relocated"

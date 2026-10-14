@@ -5,8 +5,8 @@
   "datasource": "github-tags",
   "versioning": "semver",
   "extractVersion": "^v(?<version>\\d+\\.\\d+\\.\\d+)$",
-  "startVersion": "2.33.0",
-  "allowedVersions": "2.33.0",
+  "startVersion": "2.56.0",
+  "allowedVersions": "2.56.0",
   "ignoredVersions": [],
   "reverse": true,
   "test": "bin/test.sh"

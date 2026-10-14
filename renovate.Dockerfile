@@ -9,4 +9,4 @@
 FROM scratch
 
 # renovate: datasource=github-tags depName=git packageName=git/git
-ENV GIT_VERSION=2.33.0
+ENV GIT_VERSION=2.56.0

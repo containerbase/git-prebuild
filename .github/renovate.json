@@ -9,7 +9,7 @@
       "extractVersion": "^v(?<version>\\d+\\.\\d+\\.\\d+)$"
     },
     {
-      "description": "Disabled while only git 2.33.0 is built.",
+      "description": "Disabled while only one git version is built.",
       "matchFileNames": ["renovate.Dockerfile"],
       "enabled": false
     }
