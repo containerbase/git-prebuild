@@ -8,6 +8,7 @@ Relocatable git builds for [containerbase/base](https://github.com/containerbase
 
 - Built from the [kernel.org tarballs](https://www.kernel.org/pub/software/scm/git/) on Ubuntu `jammy` for `x86_64` and `aarch64`, and used on `jammy`, `noble` and `resolute`.
 - Relocatable (`RUNTIME_PREFIX`), system config in `/etc/gitconfig`, no Perl, Python, Tcl/Tk, translations or docs, stripped binaries; see [build options](docs/build-options.md).
+- Every git release since `2.48.0` is built, the oldest minor git still backports security fixes to; containerbase falls back to the newest prebuild for older versions.
 - Releases are tagged with the git version and contain `git-<version>-jammy-<arch>.tar.xz` plus a `.sha512` checksum.
 
 Runtime packages:

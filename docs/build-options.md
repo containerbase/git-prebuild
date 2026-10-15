@@ -19,12 +19,14 @@ The binaries are stripped after `make install`.
 
 `NO_RUST` is not set, so git builds its Rust code (`libgitcore`, which replaces some C implementations) with the Rust toolchain that [`bin/install-builder.sh`](../bin/install-builder.sh) installs in the builder image from the official standalone installer.
 The toolchain is only used for the build, the archive has no new runtime dependencies.
+Rust is on by default since git 2.55; 2.52 to 2.54 only build it with `WITH_RUST`, which isn't set, so like older versions they are built without Rust.
 
 `SKIP_DASHED_BUILT_INS` is not set: local transports (`file://` URLs, `git fetch /path`, local submodules) start the dashed `git-upload-pack` from `libexec/git-core`, which that option removes.
 
 ## New git versions
 
 `binary-builder` builds every git release from `startVersion` up to the newest approved minor (`"allowedVersions": "<=2.56"` in [`builder.json`](../builder.json)), so new patches of approved minors are built on `main` without a PR.
+`startVersion` is `2.48.0`, the oldest minor git still backports security fixes to; older requested versions fall back to the newest prebuild in containerbase.
 For a new minor, Renovate opens one PR per minor that bumps that bound, two hours after its release so the kernel.org tarball is published; when the PR can't automerge (e.g. the build fails on new make options), Renovate assigns the maintainer.
 The PR build only builds the newest version in the bound, and [`bin/builder.sh`](../bin/builder.sh) compares the `# Define` options of its `Makefile` with [`make-options.txt`](../make-options.txt) before `make`: new options fail the build, options missing in an older version only print a warning.
 To approve a new minor, check the new options, enable the useful ones in `bin/builder.sh`, and add them to `make-options.txt`; the build writes the full list of the version to `.cache/make-options-<version>.txt`.
