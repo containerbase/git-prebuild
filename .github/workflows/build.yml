@@ -71,7 +71,8 @@ jobs:
     if: ${{ !cancelled() && !failure() }}
     runs-on: ${{ matrix.arch.os }}
     name: build (${{ matrix.distro }}, ${{ matrix.arch.name }})
-    timeout-minutes: 30
+    # raised for the initial backfill of all versions since startVersion
+    timeout-minutes: 120
 
     permissions:
       contents: write
