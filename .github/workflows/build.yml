@@ -29,7 +29,7 @@ jobs:
 
     steps:
       - name: ⚙️ Setup
-        uses: containerbase/internal-tools/setup@99277e09a125ec270a00ca46569ed2903478f3ef # v5.1.0
+        uses: containerbase/internal-tools/setup@065c7cd31765ae2015249a42ec1e3798e462b5d4 # v5.3.1
         with:
           save-cache: true
 
@@ -71,8 +71,8 @@ jobs:
     if: ${{ !cancelled() && !failure() }}
     runs-on: ${{ matrix.arch.os }}
     name: build (${{ matrix.distro }}, ${{ matrix.arch.name }})
-    # raised for the initial backfill of all versions since startVersion
-    timeout-minutes: 120
+    # build-limit keeps a run below the timeout (about 2 minutes per version)
+    timeout-minutes: 30
 
     permissions:
       contents: write
@@ -98,9 +98,10 @@ jobs:
           show-progress: false
 
       - name: binary-builder
-        uses: containerbase/internal-tools@99277e09a125ec270a00ca46569ed2903478f3ef # v5.1.0
+        uses: containerbase/internal-tools@065c7cd31765ae2015249a42ec1e3798e462b5d4 # v5.3.1
         with:
           command: binary-builder
+          build-limit: 10
           dry-run: ${{github.ref != 'refs/heads/main'}}
           token: ${{ secrets.GITHUB_TOKEN }}
 
