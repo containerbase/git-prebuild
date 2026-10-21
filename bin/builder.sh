@@ -41,6 +41,17 @@ awk -v file="${FILE}" '$2 == file' sha256sums.asc | sha256sum -c --strict -
 tar -xf "${FILE}"
 pushd "${NAME}-${VERSION}" > /dev/null
 
+# apply the upstream fixes from patches/, skip those the source already contains, see docs/build-options.md
+shopt -s nullglob
+for patch_file in /usr/local/share/git-prebuild/patches/*.patch; do
+  if patch -p1 -R --dry-run -s -f < "${patch_file}" > /dev/null; then
+    echo "Patch $(basename "${patch_file}") already included"
+    continue
+  fi
+  echo "Applying patch $(basename "${patch_file}")"
+  patch -p1 -N -f < "${patch_file}"
+done
+
 # fail on make options that make-options.txt doesn't know yet, see docs/build-options.md
 OPTIONS="/cache/make-options-${VERSION}.txt"
 grep -o '^# Define [A-Z][A-Z0-9_]*' Makefile | cut -c10- | LC_ALL=C sort -u > "${OPTIONS}"

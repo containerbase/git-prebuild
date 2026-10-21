@@ -23,6 +23,7 @@ apt-get install -q -y \
   libexpat1-dev \
   libpcre2-dev \
   libssl-dev \
+  patch \
   zlib1g-dev \
   ;
 

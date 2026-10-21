@@ -22,3 +22,4 @@ COPY bin /usr/local/bin
 RUN install-builder.sh
 
 COPY make-options.txt /usr/local/share/git-prebuild/
+COPY patches /usr/local/share/git-prebuild/patches
