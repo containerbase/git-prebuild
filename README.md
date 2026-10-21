@@ -8,6 +8,7 @@ Relocatable git builds for [containerbase/base](https://github.com/containerbase
 
 - Built from the [kernel.org tarballs](https://www.kernel.org/pub/software/scm/git/) on Ubuntu `jammy` for `x86_64` and `aarch64`, and used on `jammy`, `noble` and `resolute`.
 - Relocatable (`RUNTIME_PREFIX`), system config in `/etc/gitconfig`, no Perl, Python, Tcl/Tk, translations or docs, stripped binaries; see [build options](docs/build-options.md).
+- Upstream fixes from [`patches/`](patches) are applied when the git version doesn't contain them yet; see [patches](docs/build-options.md#patches).
 - Every git release since `2.48.0` is built, the oldest minor git still backports security fixes to; containerbase falls back to the newest prebuild for older versions.
 - Releases are tagged with the git version and contain `git-<version>-jammy-<arch>.tar.xz` plus a `.sha512` checksum.
 
@@ -18,7 +19,7 @@ Runtime packages:
 | `jammy`             | `ca-certificates libcurl4 libexpat1 libpcre2-8-0 libssl3 zlib1g`       |
 | `noble`, `resolute` | `ca-certificates libcurl4t64 libexpat1 libpcre2-8-0 libssl3t64 zlib1g` |
 
-Before each upload, `binary-builder` runs [`bin/test.sh`](bin/test.sh), which tests the archive in a plain container of each distro.
+Before each upload, `binary-builder` runs [`bin/test.sh`](bin/test.sh), which tests the archive in a plain container of each distro, including a clone with credentials in the url against a local basic auth server.
 
 ## Development
 
