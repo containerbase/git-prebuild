@@ -14,6 +14,7 @@
 | `USE_LIBPCRE2=YesPlease`          | perl compatible regular expressions for `git grep -P` and `log -P`                                                                                                                            |
 | `NO_PERL=YesPlease`               | no perl scripts (`send-email`, `svn`, `cvs*`, `archimport`), none of them is used by Renovate or the tools containerbase installs; needs git ≥ 2.37, where `add -i`/`add -p` are C by default |
 | `NO_PYTHON=YesPlease`             | no python scripts                                                                                                                                                                             |
+| `NO_OPENSSL=YesPlease`            | no direct OpenSSL dependency, see [TLS](#tls)                                                                                                                                                 |
 
 The binaries are stripped after `make install`.
 
@@ -22,6 +23,12 @@ The toolchain is only used for the build, the archive has no new runtime depende
 Rust is on by default since git 2.55; 2.52 to 2.54 only build it with `WITH_RUST`, which isn't set, so like older versions they are built without Rust.
 
 `SKIP_DASHED_BUILT_INS` is not set: local transports (`file://` URLs, `git fetch /path`, local submodules) start the dashed `git-upload-pack` from `libexec/git-core`, which that option removes.
+
+## TLS
+
+git is built against the GnuTLS flavour of libcurl (`libcurl4-gnutls-dev`), like Ubuntu's git package, and with `NO_OPENSSL`, so https and `imap-send` go through libcurl with GnuTLS.
+Ubuntu's OpenSSL switches to its FIPS provider when the kernel is in FIPS mode (`/proc/sys/crypto/fips_enabled` is `1`), but that provider is only shipped with Ubuntu Pro, so with the OpenSSL libcurl every https request fails with `Insufficient randomness` on FIPS hosts.
+The test in [`test/test.sh`](../test/test.sh) runs `ls-remote` over https with `OPENSSL_FIPS_MODE_SWITCH_PATH` pointing to a file with `1`, which makes Ubuntu's OpenSSL behave as on a FIPS host.
 
 ## Patches
 

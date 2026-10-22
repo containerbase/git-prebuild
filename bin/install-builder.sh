@@ -19,10 +19,9 @@ apt-get install -q -y \
   ca-certificates \
   curl \
   dumb-init \
-  libcurl4-openssl-dev \
+  libcurl4-gnutls-dev \
   libexpat1-dev \
   libpcre2-dev \
-  libssl-dev \
   patch \
   zlib1g-dev \
   ;

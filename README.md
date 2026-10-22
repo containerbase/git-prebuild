@@ -14,10 +14,10 @@ Relocatable git builds for [containerbase/base](https://github.com/containerbase
 
 Runtime packages:
 
-| Distro              | Packages                                                               |
-| ------------------- | ---------------------------------------------------------------------- |
-| `jammy`             | `ca-certificates libcurl4 libexpat1 libpcre2-8-0 libssl3 zlib1g`       |
-| `noble`, `resolute` | `ca-certificates libcurl4t64 libexpat1 libpcre2-8-0 libssl3t64 zlib1g` |
+| Distro              | Packages                                                           |
+| ------------------- | ------------------------------------------------------------------ |
+| `jammy`             | `ca-certificates libcurl3-gnutls libexpat1 libpcre2-8-0 zlib1g`    |
+| `noble`, `resolute` | `ca-certificates libcurl3t64-gnutls libexpat1 libpcre2-8-0 zlib1g` |
 
 Before each upload, `binary-builder` runs [`bin/test.sh`](bin/test.sh), which tests the archive in a plain container of each distro, including a clone with credentials in the url against a local basic auth server.
 
