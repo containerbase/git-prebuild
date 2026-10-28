@@ -17,10 +17,10 @@ GIT="${PREFIX}/bin/git"
 
 case "${CODENAME}" in
   jammy)
-    PACKAGES=(libcurl4 libssl3)
+    PACKAGES=(libcurl3-gnutls)
     ;;
   noble|resolute)
-    PACKAGES=(libcurl4t64 libssl3t64)
+    PACKAGES=(libcurl3t64-gnutls)
     ;;
   *)
     echo "Unsupported distro: ${CODENAME}" >&2
@@ -35,7 +35,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update -q
 # installs or upgrades to the current libcurl, which strips the credentials from the effective url
 apt-get install -q -y --no-install-recommends "${PACKAGES[@]}"
-dpkg-query -W 'libcurl4*'
+dpkg-query -W 'libcurl3*-gnutls'
 
 echo "Testing ${NAME} ${VERSION} on ${CODENAME}-${ARCH}"
 mkdir -p "/usr/local/${NAME}"
@@ -53,6 +53,12 @@ for file in \
     exit 1
   fi
 done
+
+# https must go through the gnutls libcurl, see docs/build-options.md#tls
+if ! ldd "${PREFIX}/libexec/git-core/git-remote-https" | grep -q 'libcurl-gnutls\.so'; then
+  echo "git-remote-https isn't linked against the GnuTLS libcurl" >&2
+  exit 1
+fi
 
 actual=$("${GIT}" --version)
 echo "${actual}"
@@ -73,6 +79,12 @@ repo=$(mktemp -d)
 "${GIT}" -C "${repo}" -c safe.directory='*' status
 
 "${GIT}" ls-remote https://github.com/git/git HEAD
+
+# ubuntu's openssl switches to its fips provider, which isn't installed, when the kernel is in fips mode;
+# with the openssl libcurl https then fails with "Insufficient randomness"
+printf '1\n' > /tmp/fips_enabled
+OPENSSL_FIPS_MODE_SWITCH_PATH=/tmp/fips_enabled "${GIT}" ls-remote https://github.com/git/git HEAD
+rm -f /tmp/fips_enabled
 
 # a shallow https clone, and a submodule over file://
 work=$(mktemp -d)
