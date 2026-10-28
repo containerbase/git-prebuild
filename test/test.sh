@@ -54,6 +54,12 @@ for file in \
   fi
 done
 
+# https must go through the gnutls libcurl, see docs/build-options.md#tls
+if ! ldd "${PREFIX}/libexec/git-core/git-remote-https" | grep -q 'libcurl-gnutls\.so'; then
+  echo "git-remote-https isn't linked against the GnuTLS libcurl" >&2
+  exit 1
+fi
+
 actual=$("${GIT}" --version)
 echo "${actual}"
 if [[ "${actual}" != "git version ${VERSION}" ]]; then
