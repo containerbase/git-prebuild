@@ -16,9 +16,6 @@ PREFIX="/usr/local/${NAME}/${VERSION}"
 GIT="${PREFIX}/bin/git"
 
 case "${CODENAME}" in
-  jammy)
-    PACKAGES=(libcurl3-gnutls)
-    ;;
   noble|resolute)
     PACKAGES=(libcurl3t64-gnutls)
     ;;
