@@ -34,10 +34,10 @@ The test in [`test/test.sh`](../test/test.sh) runs `ls-remote` over https with `
 
 Before the build, [`bin/builder.sh`](../bin/builder.sh) applies the upstream fixes from [`patches/`](../patches) in name order.
 A patch the source already contains (its reverse applies) is skipped with an `already included` message, so it stays until the oldest built version contains it; a patch that doesn't apply fails the build.
-Releases that are already published aren't rebuilt, only new versions get the patches.
+Files that are already published aren't rebuilt, only new versions get the patches. The `noble` files are built for every release, so they all have the patches; the older `jammy` files don't.
 
 - [`0001-http-handle-curl-stripping-creds-from-effective-url.patch`](../patches/0001-http-handle-curl-stripping-creds-from-effective-url.patch): git commit [`76524c2604bc`](https://github.com/git/git/commit/76524c2604bc), not in git 2.56.0.
-  curl ≥ 8.23.0 and the Ubuntu security updates of curl (`7.81.0-1ubuntu1.30` on `jammy`, `8.5.0-2ubuntu10.16` on `noble`, `8.18.0-1ubuntu2.8` on `resolute`) strip the credentials from `CURLINFO_EFFECTIVE_URL`.
+  curl ≥ 8.23.0 and the Ubuntu security updates of curl (`8.5.0-2ubuntu10.16` on `noble`, `8.18.0-1ubuntu2.8` on `resolute`) strip the credentials from `CURLINFO_EFFECTIVE_URL`.
   Without the fix git takes that for a redirect and drops the credentials, so http remotes with credentials in the url, like `https://<token>@host/repo.git`, send the following requests without them and fail.
   The test in [`test/test.sh`](../test/test.sh) runs `ls-remote` and `clone` with `http://dummytoken@127.0.0.1:<port>/repo.git` against a basic auth server ([`test/auth-server.py`](../test/auth-server.py) in front of the prebuild's `git http-backend`) with the current libcurl of each distro, and checks that the `POST` requests carry the credentials.
 

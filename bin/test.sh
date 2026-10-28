@@ -14,8 +14,8 @@ fi
 
 ARCHIVE=$(realpath "${1}")
 VERSION=${2}
-DISTROS=(jammy noble resolute)
-declare -A RELEASES=([jammy]=22.04 [noble]=24.04 [resolute]=26.04)
+DISTROS=(noble resolute)
+declare -A RELEASES=([noble]=24.04 [resolute]=26.04)
 TEST_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/test"
 
 read -r -a docker_args <<< "${DOCKER_RUN_ARGS}"
