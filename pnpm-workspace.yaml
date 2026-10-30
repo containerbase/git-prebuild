@@ -2,3 +2,11 @@
 saveExact: true
 savePrefix: ''
 shellEmulator: true
+
+# in line with https://github.com/containerbase/.github/blob/main/default.json,
+# all non-Renovate or non-Containerbase packages should only be installed after
+# 3 days
+minimumReleaseAge: 4320
+minimumReleaseAgeExclude:
+  - '@renovatebot/*'
+  - '@containerbase/*'
