@@ -30,7 +30,7 @@ apt-get install -q -y \
 # rust toolchain, only used for the build
 #--------------------------------
 # renovate: datasource=github-releases depName=rust packageName=rust-lang/rust
-RUST_VERSION=1.90.0
+RUST_VERSION=1.99.1
 
 RUST_TARGET="$(uname -m)-unknown-linux-gnu"
 RUST_FILE="rust-${RUST_VERSION}-${RUST_TARGET}.tar.xz"
