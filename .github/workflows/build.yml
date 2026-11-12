@@ -57,7 +57,7 @@ jobs:
           check_all_files_with_shebangs: 'true'
 
       - name: Check workflow files
-        run: mise exec -- jactionlint -color
+        run: mise exec -- jactionlint --color
 
       - name: Run zizmor
         run: mise exec -- zizmor --format github .github/
