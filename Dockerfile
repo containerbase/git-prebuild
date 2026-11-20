@@ -6,7 +6,7 @@ ARG DISTRO=noble
 #--------------------------------------
 # base images
 #--------------------------------------
-FROM ghcr.io/containerbase/ubuntu:24.04@sha256:73b999393d07f2bf65a40373778a44dc9a6d54ad7718d29247d8ff9413c4d6a8 AS build-noble
+FROM ghcr.io/containerbase/ubuntu:24.04@sha256:ab18ecc70c55c703eae968948f9f1dbbe662aa8d9badac7c982e6a6237b9d74c AS build-noble
 
 
 #--------------------------------------
